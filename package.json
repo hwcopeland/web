@@ -5,6 +5,7 @@
   "dependencies": {
     "@craco/craco": "^5.9.0",
     "@heroicons/react": "^1.0.1",
+    "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
     "next": "^14.0.4",
     "react": "^18.2.0",

@@ -1,47 +1,47 @@
-import {requests , gql} from 'graphql-request'
+import { request, gql } from 'graphql-request';
 
-const graphqlAPI = process.env.NEXT_PUBLIC_GRAPHCMS_ENDPOINT
+const graphqlAPI = process.env.NEXT_PUBLIC_GRAPHCMS_ENDPOINT;
 
 export const getPosts = async () => {
     const query = gql`
-        query Assets {
+        query GetPosts {
             assets {
-            createdAt
-            id
-            publishedAt
-            fileName
-            url
-            updatedAt
+                createdAt
+                id
+                publishedAt
+                fileName
+                url
+                updatedAt
             }
             postsConnection {
-            edges {
-                node {
-                    author {
-                        bio
-                        name
-                        id
-                        photo {
-                        url
+                edges {
+                    node {
+                        author {
+                            bio
+                            name
+                            id
+                            photo {
+                                url
+                            }
+                        }
+                        createdAt
+                        slug
+                        title
+                        excerpt
+                        featuredImage {
+                            url
+                        }
+                        categories {
+                            name
+                            slug
                         }
                     }
-                    createdAt
-                    slug
-                    title
-                    exerpt
-                    featuredImage {
-                        url
-                    }
-                    categories {
-                        name
-                        slug
                 }
-                }
-            }
             }
         }
-      
-    `
-    const results = await requests(graphqlAPI, query);
+    `;
+
+    const results = await request(graphqlAPI, query);
 
     return results.postsConnection.edges;
-}
+};

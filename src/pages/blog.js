@@ -1,7 +1,7 @@
 import React from "react"; 
 import Navbar from "../components/Navbar";
 import { PostCard, PostWidget, Categories, BlogHeader } from "../components";
-import { getPosts } from "../services/index.js";
+import { getPosts } from "../services";
 
 
 export default function Blog({posts}) {
@@ -27,9 +27,11 @@ export default function Blog({posts}) {
   }
 
   export async function getStaticProps() {
-    const posts = (await getPosts()) || [];XMLDocument
+    const posts = (await getPosts()) || [];
     return {
       props: {posts}
     };
   }
+
+
 
