@@ -5,6 +5,7 @@ import Bio from "./pages/bio";
 import Landing from "./pages/landing";
 import Blog from "./pages/blog";
 import "./index.css"
+import "./styles/globals.scss"
 
 export default function App() {
   return (
