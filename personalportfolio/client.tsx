@@ -1,27 +1,53 @@
 // client.js
-import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
 
 
-// Create the http link
-const httpLink = createHttpLink({
-  uri: 'https://api.github.com/graphql',
-});
-
-// Generate and set the header with the auth details
-const authLink = setContext((_, { headers }) => {
-
-  // return the headers to the context so httpLink can read them
-  return {
-    headers: {
-      ...headers,
-      authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-    },
-  };
-});
-
-// Generate your client with the authLink and httpLink
-export const client = new ApolloClient({
+const hygraphclient = new ApolloClient({
+  uri: 'https://api-us-east-1-shared-usea1-02.hygraph.com/v2/clqtyw1icggnc01ui7yon7108/master',
   cache: new InMemoryCache(),
-  link: authLink.concat(httpLink),
 });
+
+const getPosts = gql`
+      query getPosts {
+          assets {
+              createdAt
+              id
+              publishedAt
+              fileName
+              url
+              updatedAt
+          }
+          postsConnection {
+              edges {
+                  node {
+                      author {
+                          bio
+                          name
+                          id
+                          photo {
+                              url
+                          }
+                      }
+                      createdAt
+                      slug
+                      title
+                      excerpt
+                      featuredImage {
+                          url
+                      }
+                      categories {
+                          name
+                          slug
+                      }
+                  }
+              }
+          }
+      }
+  `;
+
+  export async function getPost() {
+    const { data } = await hygraphclient.query({
+      query: getPosts,
+    });
+    return data.postConnection.edges;
+  }
