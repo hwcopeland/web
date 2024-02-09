@@ -7,6 +7,14 @@ export const projects = [
     image: "./Docked-7JRN.gif",
     link: "https://github.com/hwcopeland/TUMDock",
   },
+  {
+    title: "HWCopeland.net",
+    subtitle: "Full Stack Web Portfolio",
+    description:
+      "A full stack web portfolio with React, Next.js, Tailwind-CSS and Sanity. This project was started as a place to digitalize and display my work. This site is self-hosted from homelab servers and is open source.",
+    image: "./web_vscode.png",
+    link: "https://github.com/hwcopeland/web",
+  },
 ];
 
 export const testimonials = [

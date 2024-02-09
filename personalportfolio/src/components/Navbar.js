@@ -16,7 +16,7 @@ export default function Navbar() {
           <a href="/bio" className="mr-5 hover:text-white">
             Who am I?
           </a>
-          <a href="/github" className="mr-5 hover:text-white">
+          <a href="https://github.com/hwcopeland" className="mr-5 hover:text-white">
             Repositories
           </a>
           <a href="/blog" className="mr-5 hover:text-white">

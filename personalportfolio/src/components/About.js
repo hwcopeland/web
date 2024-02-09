@@ -10,9 +10,7 @@ export default function About() {
                 <br className="hidden lg:inline-block" /> I build for the Future.
               </h1>
               <p className="mb-8 leading-relaxed">
-                I am an Organic Chemist, who has a finger in every pie and a toe in every pool. 
-                I have a passion for learning, and I am always looking for new ways to challenge myself. In this episode, I build a professional portfolio using React and Tailwind CSS. 
-                I am a firm believer in the power of data, and I am excited to see what I can do with it.
+              As an Organic Chemist with a curious mind, I enjoy exploring diverse areas at the intersection of science and technology. My passion for learning fuels my constant pursuit of new challenges, like building my professional portfolio using React and Tailwind CSS. I'm a firm believer in the power of data, and I'm excited to apply my skills to new projects and collaborations.
               </p>
               <div className="flex justify-center">
                 <a

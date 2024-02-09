@@ -18,26 +18,12 @@ export default function Contact() {
             style={{ filter: "opacity(0.8)" }}
             src="https://www.google.com/maps/embed/v1/place?q=MTSU,+Science+Building,+Murfreesboro,+TN,+USA&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8"
           />
-          <div className="bg-gray-900 relative flex flex-wrap py-6 rounded shadow-md">
-            <div className="lg:w-2/5 px-6">
-              <h2 className="title-font font-semibold text-white tracking-widest text-xs">
-                OFFICE
-              </h2>
-              <p className="mt-1">               
-                SCI 3050A
-              </p>
-              <h2 className="title-font font-semibold text-white tracking-widest text-xs mt-2">
-                LABORATORY
-              </h2>
-              <p className="mt-1">               
-                SCI 3007
-              </p>
-            </div>  
+          <div className="bg-gray-900 relative flex flex-wrap py-6 rounded shadow-md">  
             <div className="lg:w-1/2 px-6 mt-4 lg:mt-0">
               <h2 className="title-font font-semibold text-white tracking-widest text-xs">
                 EMAIL
               </h2>
-              <a className="text-indigo-400 leading-relaxed">
+              <a className="text-indigo-400 leading-relaxed hover:underline leading-relaxed">
                 hwc2e@mtmail.mtsu.edu
               </a>
               <h2 className="title-font font-semibold text-white tracking-widest text-xs mt-4">
@@ -55,47 +41,8 @@ export default function Contact() {
             Lets Talk!
           </h2>
           <p className="leading-relaxed mb-5">
-            I'm always open to make new connections. Feel free to inquire about my work, or just say hello! 
+            I'm always open to make new connections. Feel free to inquire about my work, or just say hello! I prefer email, but I can also be reached on LinkedIn or by phone.
           </p>
-          <div className="relative mb-4">
-            <label htmlFor="name" className="leading-7 text-sm text-gray-400">
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              className="w-full bg-gray-800 rounded border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-            />
-          </div>
-          <div className="relative mb-4">
-            <label htmlFor="email" className="leading-7 text-sm text-gray-400">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="w-full bg-gray-800 rounded border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-            />
-          </div>
-          <div className="relative mb-4">
-            <label
-              htmlFor="message"
-              className="leading-7 text-sm text-gray-400">
-              Message
-            </label>
-            <textarea
-              id="message"
-              name="message"
-              className="w-full bg-gray-800 rounded border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 h-32 text-base outline-none text-gray-100 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
-            />
-          </div>
-          <button
-            type="submit"
-            className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
-            Submit
-          </button>
         </form>
       </div>
     </section>
