@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag hwcopelandweb:$(date +%s)
+      run: docker build . --file personalportfolio/Dockerfile --tag hwcopelandweb:$(date +%s)
