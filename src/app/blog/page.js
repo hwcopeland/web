@@ -8,7 +8,6 @@ import MlbPitchData from './components/MlbPitchData';
 const BlogPage = () => {
     return (
         <div>
-            <h1>Blog Page</h1>
             <MlbPitchData />
         </div>
     );
