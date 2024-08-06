@@ -1,9 +1,17 @@
-import React from "react";
+// src/app/blog/page.js
 
-export default function Bio() {
+"use client";  // Add this line
+
+import React from 'react';
+import MlbPitchData from './components/MlbPitchData';
+
+const BlogPage = () => {
     return (
-      <main className="text-gray-400 bg-gray-900 body-font">
-        Page Under Construction
-      </main>
+        <div>
+            <h1>Blog Page</h1>
+            <MlbPitchData />
+        </div>
     );
-}
+};
+
+export default BlogPage;
