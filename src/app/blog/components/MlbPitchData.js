@@ -1,96 +1,146 @@
-'use client'; // Make sure this is added at the top
-
+'use client';
 import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+
+const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
 
 const MlbPitchData = () => {
-    const [games, setGames] = useState(null);
-    const [activeGameData, setActiveGameData] = useState({});
-    const [loading, setLoading] = useState(true);
+  const [games, setGames] = useState([]);
+  const [selectedGameData, setSelectedGameData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [showHomePitches, setShowHomePitches] = useState(true);
+  const [pollingInterval, setPollingInterval] = useState(null);
 
-    useEffect(() => {
-        const fetchGames = async () => {
-            try {
-                const response = await fetch('http://localhost:8686/api/games'); // Ensure this URL is correct
-                const result = await response.json();
-                console.log('Fetched games:', result); // Debugging line
-                setGames(result);
-
-                // Fetch data for active games
-                const activeGames = result.filter(game => game.label.includes('In Progress'));
-                if (activeGames.length === 0) {
-                    setLoading(false); // No active games, stop loading
-                } else {
-                    activeGames.forEach(game => {
-                        fetchActiveGameData(game.value);
-                    });
-                }
-            } catch (error) {
-                console.error('Error fetching games:', error);
-                setLoading(false);
-            }
-        };
-
-        const fetchActiveGameData = async (gameId) => {
-            try {
-                const response = await fetch(`http://localhost:8686/api/game/${gameId}`);
-                const result = await response.json();
-                setActiveGameData(prevState => ({ ...prevState, [gameId]: result }));
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching game data:', error);
-                setLoading(false);
-            }
-        };
-
-        fetchGames();
-    }, []);
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    const formatGameLabel = (gameLabel) => {
-        const labelParts = gameLabel.split(' - ');
-        if (labelParts.length < 2) return gameLabel; // Return the original label if it's not in the expected format
-        const [teams] = labelParts;
-        const [awayTeam, homeTeam] = teams.split('@');
-        return `${awayTeam.trim()} @ ${homeTeam.trim()}`;
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        const response = await fetch('http://flaskapi.hwcopeland.net/api/games');
+        if (!response.ok) {
+          throw new Error('Failed to fetch games');
+        }
+        const result = await response.json();
+        setGames(result);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching games:', error);
+        setLoading(false);
+      }
     };
 
-    return (
-        <div className="text-gray-400 bg-gray-900 body-font flex">
-            <div className="w-1/3 h-screen overflow-y-scroll p-4">
-                <h2 className="text-3xl font-bold mb-4">MLB Pitch Data</h2>
-                <ul className="mb-8">
-                    {games && games.length > 0 ? (
-                        games.map((game) => (
-                            <li key={game.value} className="mb-2">
-                                {formatGameLabel(game.label)}
-                            </li>
-                        ))
-                    ) : (
-                        <li>No games scheduled or available at the moment.</li>
-                    )}
-                </ul>
-            </div>
-            <div className="w-2/3 p-4">
-                {Object.keys(activeGameData).length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {Object.entries(activeGameData).map(([gameId, gameData]) => (
-                            <div key={gameId} className="bg-gray-800 p-4 rounded-lg shadow-lg">
-                                <h3 className="text-xl font-bold mb-2">{gameData.game_info.title}</h3>
-                                <h4 className="text-md mb-2">{gameData.game_info.subtitle}</h4>
-                                <div dangerouslySetInnerHTML={{ __html: gameData.pitch_plot }} />
-                                <div dangerouslySetInnerHTML={{ __html: gameData.stats_plot }} />
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div>No active games at the moment.</div>
-                )}
-            </div>
-        </div>
-    );
+    fetchGames();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (pollingInterval) clearInterval(pollingInterval);
+    };
+  }, [pollingInterval]);
+
+  const startPolling = (gameId) => {
+    if (pollingInterval) clearInterval(pollingInterval);
+    const interval = setInterval(() => fetchGameData(gameId), 30000); // Poll every 30 seconds
+    setPollingInterval(interval);
+  };
+
+  const fetchGameData = async (gameId) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`http://flaskapi.hwcopeland.net/api/game/${gameId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch game data');
+      }
+      const result = await response.json();
+
+      // Verify if pitch_plot and stats_plot are valid JSON strings
+      let pitchPlot = result.pitch_plot ? JSON.parse(result.pitch_plot) : null;
+      let statsPlot = result.stats_plot ? JSON.parse(result.stats_plot) : null;
+
+      const parsedResult = {
+        ...result,
+        pitch_plot: pitchPlot,
+        stats_plot: statsPlot
+      };
+      setSelectedGameData(parsedResult);
+      startPolling(gameId); // Start polling after successful fetch
+    } catch (error) {
+      console.error('Error fetching game data:', error);
+    }
+    setLoading(false);
+  };
+
+  const formatGameLabel = (gameLabel) => {
+    const labelParts = gameLabel.split(' - ');
+    if (labelParts.length < 2) return gameLabel;
+    const [teams] = labelParts;
+    const [awayTeam, homeTeam] = teams.split('@');
+    return `${awayTeam.trim()} @ ${homeTeam.trim()}`;
+  };
+
+  // Ensure the plot is square and responsive
+  const plotLayout = (layout) => ({
+    ...layout,
+    width: 600,
+    height: 600,
+    autosize: false,
+  });
+
+  const toggleVisibility = (data, showHome) => {
+    return data.map((trace) => ({
+      ...trace,
+      visible: (showHome && trace.name.includes("(Home)")) || (!showHome && trace.name.includes("(Away)")) ? true : 'legendonly'
+    }));
+  };
+
+  return (
+    <div className="text-gray-400 bg-gray-900 body-font flex h-screen">
+      <div className="w-1/3 overflow-y-auto p-4 border-r border-gray-800">
+        <h2 className="text-3xl font-bold mb-4">MLB Pitch Data</h2>
+        <ul className="mb-8">
+          {games.length > 0 ? (
+            games.map((game) => (
+              <li 
+                key={game.value} 
+                className="mb-2 cursor-pointer hover:text-white"
+                onClick={() => fetchGameData(game.value)}
+              >
+                {formatGameLabel(game.label)}
+              </li>
+            ))
+          ) : (
+            <li>No games scheduled or available at the moment.</li>
+          )}
+        </ul>
+      </div>
+      <div className="w-2/3 p-4 overflow-y-auto">
+        {loading ? (
+          <div>Loading...</div>
+        ) : selectedGameData ? (
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg min-h-[800px]">
+            <h3 className="text-xl font-bold mb-2">{selectedGameData.game_info.title}</h3>
+            <h4 className="text-md mb-4">{selectedGameData.game_info.subtitle}</h4>
+            <button 
+              className="mb-4 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded"
+              onClick={() => setShowHomePitches(!showHomePitches)}
+            >
+              Toggle Pitch View ({showHomePitches ? 'Show Away Pitches' : 'Show Home Pitches'})
+            </button>
+            {selectedGameData.pitch_plot && (
+              <div className="aspect-square w-full max-w-[800px] mx-auto">
+                <Plot
+                  data={toggleVisibility(selectedGameData.pitch_plot.data, showHomePitches)}
+                  layout={plotLayout(selectedGameData.pitch_plot.layout)}
+                  config={{ responsive: true }}
+                  style={{ width: '100%', height: '100%' }}
+                />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div>Select a game to view pitch data.</div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default MlbPitchData;
